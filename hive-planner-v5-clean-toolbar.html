@@ -373,10 +373,12 @@
   // The reference hive is cropped to its inner grid and fitted to 13 columns x 13 rows.
   // It is centered on cell (500, 500), and the planner grid is drawn over it.
   const MAP_SRC = "./map-background-aligned.jpg";
-  const MAP_COLS = 13;
-  const MAP_ROWS = 13;
-  const MAP_X = (500 - Math.floor(MAP_COLS / 2)) * TILE_W;
-  const MAP_Y = (WORLD - (500 + Math.floor(MAP_ROWS / 2) + 1)) * TILE_H;
+  // Stretch the map image over the entire 1000 x 1000 world. Tile dimensions
+  // remain unchanged, so the coordinate/grid overlay still uses the same cell size.
+  const MAP_COLS = WORLD;
+  const MAP_ROWS = WORLD;
+  const MAP_X = 0;
+  const MAP_Y = 0;
   const mapBackground = new Image();
   mapBackground.src = MAP_SRC;
   let mapBackgroundEnabled = true;
@@ -973,7 +975,7 @@
 
     const drawMapBackground = () => {
       if (mapBackgroundEnabled && mapBackground.complete && mapBackground.naturalWidth > 0) {
-        ctx.drawImage(mapBackground, MAP_X, MAP_Y, MAP_COLS * TILE_W, MAP_ROWS * TILE_H);
+        ctx.drawImage(mapBackground, MAP_X, MAP_Y, WORLD_W, WORLD_H);
       }
     };
 
