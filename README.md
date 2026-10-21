@@ -2,7 +2,7 @@
 
 A lightweight browser-based planner for building hive layouts on a large coordinate grid.
 
-**Live App:** https://platinumpup.github.io/hive-planner-pwa/
+**Live App:** https://platinumpup.github.io/S2/
 
 ## How It Works
 
