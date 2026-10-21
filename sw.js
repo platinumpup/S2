@@ -1,7 +1,8 @@
-const CACHE_NAME = 'hive-planner-oof-split-eye-exit-v1';
+const CACHE_NAME = 'hive-planner-oof-map-background-v2';
 const ASSETS = [
   './',
   './index.html',
+  './map-background-aligned.jpg',
   './manifest.webmanifest',
   './icon-180.png',
   './icon-192.png',
