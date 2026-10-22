@@ -476,18 +476,25 @@
   // from the top-left boundary (0,0) to the far boundary (1000,1000).
   // TILE_W/TILE_H and all coordinate math remain unchanged.
   const MAP_SRC = "./map-background-aligned.jpg";
-  // Anchor the upper-left numbered-free square's INSIDE corners to world coordinates:
-  // top-left (50,949), bottom-right (98,901). The reference square is 48x48 cells.
-  // Source-image anchor measured from the supplied image (source pixels).
-  const MAP_ANCHOR_LEFT_PX = 94;
-  const MAP_ANCHOR_TOP_PX = 97;
-  const MAP_ANCHOR_RIGHT_PX = 181;
-  const MAP_ANCHOR_BOTTOM_PX = 190;
-  const MAP_ANCHOR_WORLD_SPAN = 48;
-  const MAP_SCALE_X = (MAP_ANCHOR_WORLD_SPAN * TILE_W) / (MAP_ANCHOR_RIGHT_PX - MAP_ANCHOR_LEFT_PX);
-  const MAP_SCALE_Y = (MAP_ANCHOR_WORLD_SPAN * TILE_H) / (MAP_ANCHOR_BOTTOM_PX - MAP_ANCHOR_TOP_PX);
-  const MAP_X = 50 * TILE_W - MAP_ANCHOR_LEFT_PX * MAP_SCALE_X;
-  const MAP_Y = (WORLD - 950) * TILE_H - MAP_ANCHOR_TOP_PX * MAP_SCALE_Y;
+  // Calibrate the background against the six numbered-free squares supplied by the user.
+  // Each pair is [source-image pixel, world coordinate] for the square's top-left inside corner.
+  // World y counts upward, so canvas y is (WORLD - (worldY + 1)) * TILE_H.
+  // Source pixel positions are measured from map-background-aligned.jpg (1800 x 1864).
+  const MAP_ANCHORS = [
+    { px: 94,  py: 94,  x: 50,  y: 949 },
+    { px: 233, py: 238, x: 125, y: 874 },
+    { px: 372, py: 383, x: 200, y: 799 },
+    { px: 511, py: 526, x: 275, y: 724 },
+    { px: 650, py: 671, x: 350, y: 649 },
+    { px: 790, py: 815, x: 425, y: 574 }
+  ];
+  const MAP_FIRST = MAP_ANCHORS[0];
+  const MAP_LAST = MAP_ANCHORS[MAP_ANCHORS.length - 1];
+  // Use the full diagonal anchor span for scale, rather than relying on one square's edges.
+  const MAP_SCALE_X = ((MAP_LAST.x - MAP_FIRST.x) * TILE_W) / (MAP_LAST.px - MAP_FIRST.px);
+  const MAP_SCALE_Y = ((MAP_FIRST.y - MAP_LAST.y) * TILE_H) / (MAP_LAST.py - MAP_FIRST.py);
+  const MAP_X = MAP_FIRST.x * TILE_W - MAP_FIRST.px * MAP_SCALE_X;
+  const MAP_Y = (WORLD - (MAP_FIRST.y + 1)) * TILE_H - MAP_FIRST.py * MAP_SCALE_Y;
   const MAP_W = 1800 * MAP_SCALE_X;
   const MAP_H = 1864 * MAP_SCALE_Y;
   const mapBackground = new Image();
