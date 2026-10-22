@@ -16,11 +16,11 @@
 <link rel="icon" href="icon-192.png" />
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Bangers&display=swap');
-  :root { --bg:#070806; --panel:rgba(8,10,8,.86); --line:rgba(178,216,110,.78); --text:#f4ffd6; --muted:#bfd09b; --accent:#9cff59; --danger:#ff6b6b; }
+  :root { --bg:#061a20; --panel:rgba(5,25,29,.91); --line:rgba(62,224,202,.72); --text:#effffb; --muted:#a8d8d0; --accent:#42dccb; --danger:#ff8b38; }
   html,body { margin:0; height:100%; overflow:hidden; background:var(--bg); color:var(--text); font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif; user-select:none; -webkit-user-select:none; overscroll-behavior:none; }
   input, textarea { user-select:text; -webkit-user-select:text; }
-  #canvas { width:100vw; height:100vh; display:block; touch-action:none; background:#161810; }
-  .bar { position:fixed; left:8px; right:8px; z-index:10; display:flex; gap:6px; flex-wrap:wrap; align-items:center; padding:7px; border:1px solid rgba(180,220,120,.28); background:var(--panel); backdrop-filter:blur(12px); border-radius:14px; box-shadow:0 8px 30px rgba(0,0,0,.45); }
+  #canvas { width:100vw; height:100vh; display:block; touch-action:none; background:linear-gradient(135deg,#0b2638 0%,#103b3d 48%,#1b4035 100%); }
+  .bar { position:fixed; left:8px; right:8px; z-index:10; display:flex; gap:6px; flex-wrap:wrap; align-items:center; padding:7px; border:1px solid rgba(66,220,203,.28); background:var(--panel); backdrop-filter:blur(12px); border-radius:14px; box-shadow:0 8px 30px rgba(0,0,0,.45); }
   #top { top:max(8px, env(safe-area-inset-top)); }
   #bottom { bottom:max(8px, env(safe-area-inset-bottom)); align-items:center; }
   #rectPanel, #iconPanel {
@@ -29,7 +29,7 @@
     display:grid; grid-template-columns:repeat(auto-fit, minmax(96px, 1fr)); gap:8px;
     overflow:auto; padding:0;
     max-height:0; opacity:0; visibility:hidden; pointer-events:none;
-    border:1px solid rgba(180,220,120,0); background:rgba(8,10,8,.94);
+    border:1px solid rgba(66,220,203,0); background:rgba(4,8,18,.94);
     backdrop-filter:blur(14px); border-radius:14px; box-shadow:0 12px 34px rgba(0,0,0,.45);
     transform:translateY(-6px) scale(.985); transform-origin:top left;
     transition:max-height .18s ease, opacity .14s ease, transform .18s ease, padding .18s ease, border-color .18s ease;
@@ -37,7 +37,7 @@
   #rectPanel.show, #iconPanel.show {
     max-height:min(360px, calc(100vh - var(--tool-tray-top, 62px) - 90px));
     opacity:1; visibility:visible; pointer-events:auto; padding:8px;
-    border-color:rgba(180,220,120,.26); transform:translateY(0) scale(1);
+    border-color:rgba(66,220,203,.26); transform:translateY(0) scale(1);
   }
   .iconTool, .rectTool { min-width:100px; max-width:100px; padding:8px; display:flex; flex-direction:column; gap:6px; align-items:center; justify-content:flex-start; text-align:center; font-size:12px; line-height:1.15; }
   .iconTool img { width:52px; height:52px; object-fit:contain; pointer-events:none; }
@@ -48,20 +48,20 @@
   .rectSwatch.yellow { background:rgba(255,215,70,.34); border-color:rgba(255,240,150,.98); }
   .rectSwatch.outline { background:transparent; border-color:rgba(245,245,245,.98); }
   button, input, textarea { font:inherit; }
-  button { color:var(--text); background:rgba(255,255,255,.08); border:1px solid rgba(215,255,160,.24); border-radius:11px; padding:9px 10px; min-height:38px; }
-  button.active { background:rgba(156,255,89,.18); border-color:rgba(156,255,89,.75); color:#ecffd9; }
+  button { color:var(--text); background:rgba(255,255,255,.08); border:1px solid rgba(66,180,165,.24); border-radius:11px; padding:9px 10px; min-height:38px; }
+  button.active { background:rgba(66,220,203,.18); border-color:rgba(66,220,203,.82); color:#eafff8; }
   button.danger { border-color:rgba(255,107,107,.6); color:#ffd2d2; }
-  input { width:62px; color:var(--text); background:rgba(0,0,0,.25); border:1px solid rgba(215,255,160,.22); border-radius:9px; padding:8px 6px; }
-  .readout { font-size:12px; line-height:1.25; color:#f4ffd6; padding:6px 9px; min-width:158px; flex:0 0 auto; border:1px solid rgba(215,255,160,.18); border-radius:10px; background:rgba(0,0,0,.22); }
+  input { width:62px; color:var(--text); background:rgba(0,0,0,.25); border:1px solid rgba(66,180,165,.22); border-radius:9px; padding:8px 6px; }
+  .readout { font-size:12px; line-height:1.25; color:#f2fbff; padding:6px 9px; min-width:158px; flex:0 0 auto; border:1px solid rgba(66,180,165,.18); border-radius:10px; background:rgba(0,0,0,.22); }
   .readout strong { color:#ffffff; font-weight:700; }
   #bottom label { white-space:nowrap; }
   .spacer { flex:1; }
-  #jsonPanel { position:fixed; inset:max(52px, env(safe-area-inset-top)) 8px max(80px, env(safe-area-inset-bottom)) 8px; z-index:20; display:none; flex-direction:column; gap:8px; padding:10px; border-radius:16px; border:1px solid rgba(180,220,120,.3); background:rgba(5,7,5,.95); backdrop-filter:blur(14px); }
-  #textPanel { position:fixed; left:10px; right:10px; top:50%; transform:translateY(-50%); z-index:21; display:none; flex-direction:column; gap:8px; padding:12px; border-radius:16px; border:1px solid rgba(180,220,120,.35); background:rgba(5,7,5,.96); backdrop-filter:blur(14px); box-shadow:0 10px 40px rgba(0,0,0,.55); }
-  #coordMenu { position:fixed; z-index:30; display:none; padding:6px; border-radius:14px; border:1px solid rgba(255,255,255,.18); background:rgba(20,22,18,.96); backdrop-filter:blur(14px); box-shadow:0 10px 30px rgba(0,0,0,.55); }
+  #jsonPanel { position:fixed; inset:max(52px, env(safe-area-inset-top)) 8px max(80px, env(safe-area-inset-bottom)) 8px; z-index:20; display:none; flex-direction:column; gap:8px; padding:10px; border-radius:16px; border:1px solid rgba(66,220,203,.3); background:rgba(3,5,10,.95); backdrop-filter:blur(14px); }
+  #textPanel { position:fixed; left:10px; right:10px; top:50%; transform:translateY(-50%); z-index:21; display:none; flex-direction:column; gap:8px; padding:12px; border-radius:16px; border:1px solid rgba(66,220,203,.35); background:rgba(3,5,10,.96); backdrop-filter:blur(14px); box-shadow:0 10px 40px rgba(0,0,0,.55); }
+  #coordMenu { position:fixed; z-index:30; display:none; padding:6px; border-radius:14px; border:1px solid rgba(255,255,255,.18); background:rgba(5,10,22,.96); backdrop-filter:blur(14px); box-shadow:0 10px 30px rgba(0,0,0,.55); }
   #coordMenu button { min-height:34px; padding:8px 12px; white-space:nowrap; }
-  #textInput { width:100%; box-sizing:border-box; color:var(--text); background:#0d110b; border:1px solid rgba(180,220,120,.35); border-radius:12px; padding:12px; font-size:16px; }
-  #jsonText { flex:1; width:100%; box-sizing:border-box; resize:none; color:#eefbd5; background:#0d110b; border:1px solid rgba(180,220,120,.35); border-radius:12px; padding:10px; font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; font-size:12px; }
+  #textInput { width:100%; box-sizing:border-box; color:var(--text); background:#07101c; border:1px solid rgba(66,220,203,.35); border-radius:12px; padding:12px; font-size:16px; }
+  #jsonText { flex:1; width:100%; box-sizing:border-box; resize:none; color:#eafff8; background:#07101c; border:1px solid rgba(66,220,203,.35); border-radius:12px; padding:10px; font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; font-size:12px; }
 
   #splash {
     position:fixed; inset:0; z-index:1000; display:flex; align-items:center; justify-content:center;
@@ -199,7 +199,7 @@
   }
   #splashFill {
     height:100%; width:0%; border-radius:inherit;
-    background:linear-gradient(90deg, #26d8ff 0%, #4b7dff 50%, #ffe51c 100%);
+    background:linear-gradient(90deg, #42dccb 0%, #4b7dff 50%, #ffe51c 100%);
     box-shadow:0 0 18px rgba(255,229,28,.50);
     animation:splashLoad 3.2s ease forwards;
   }
@@ -219,18 +219,18 @@
     #splashSub { margin-top:8px; }
   }
 
-  .hint { position:fixed; top:calc(var(--tool-tray-top, 62px) + 8px); left:10px; right:10px; z-index:9; pointer-events:none; text-align:center; color:#efffdc; font-size:12px; opacity:.86; text-shadow:0 2px 6px #000; transition:top .18s ease; }
+  .hint { position:fixed; top:calc(var(--tool-tray-top, 62px) + 8px); left:10px; right:10px; z-index:9; pointer-events:none; text-align:center; color:#eafff8; font-size:12px; opacity:.86; text-shadow:0 2px 6px #000; transition:top .18s ease; }
 
 
-  .brand { font-weight:800; letter-spacing:.08em; text-transform:uppercase; font-size:13px; color:#efffdc; padding:0 8px; white-space:nowrap; }
+  .brand { font-weight:800; letter-spacing:.08em; text-transform:uppercase; font-size:13px; color:#eafff8; padding:0 8px; white-space:nowrap; }
   .bar.compact { flex-wrap:nowrap; overflow-x:auto; scrollbar-width:none; }
   .bar.compact::-webkit-scrollbar { display:none; }
   .toolGroup { display:flex; gap:6px; align-items:center; flex:0 0 auto; }
   #moreMenu {
     position:fixed; z-index:35; display:none; grid-template-columns:1fr; gap:6px;
     width:min(220px, calc(100vw - 16px)); padding:8px; box-sizing:border-box;
-    border:1px solid rgba(180,220,120,.26); border-radius:14px;
-    background:rgba(8,10,8,.94); backdrop-filter:blur(14px);
+    border:1px solid rgba(66,220,203,.26); border-radius:14px;
+    background:rgba(4,8,18,.94); backdrop-filter:blur(14px);
     box-shadow:0 12px 34px rgba(0,0,0,.45);
   }
   #moreMenu.show { display:grid; }
@@ -238,8 +238,8 @@
   #objectActions {
     position:fixed; right:8px; top:var(--context-top, 64px); z-index:28;
     display:none; gap:6px; align-items:center; flex-wrap:wrap; padding:7px;
-    border:1px solid rgba(180,220,120,.25); border-radius:14px;
-    background:rgba(8,10,8,.90); backdrop-filter:blur(12px);
+    border:1px solid rgba(66,220,203,.25); border-radius:14px;
+    background:rgba(4,8,18,.90); backdrop-filter:blur(12px);
     box-shadow:0 10px 28px rgba(0,0,0,.42);
   }
   #objectActions.show { display:flex; }
@@ -249,8 +249,8 @@
   #bottom .jumpGroup { display:flex; gap:6px; align-items:center; flex:0 0 auto; }
   #bottom .jumpTitle { color:var(--muted); font-size:12px; white-space:nowrap; }
   .textSizeRow { display:flex; gap:10px; align-items:center; flex-wrap:wrap; color:var(--muted); font-size:13px; }
-  #textSizeRange { flex:1 1 180px; width:auto; min-width:150px; accent-color:#35d8ff; }
-  #textSizeValue { min-width:44px; color:#fff7d6; font-weight:800; }
+  #textSizeRange { flex:1 1 180px; width:auto; min-width:150px; accent-color:#42dccb; }
+  #textSizeValue { min-width:44px; color:#fff0a6; font-weight:800; }
   #editTextBtn { display:none; }
   body.toolbarMini #top { right:auto; width:auto; max-width:calc(100vw - 16px); border-radius:999px; padding:6px; }
   body.toolbarMini #top .brand, body.toolbarMini #top .spacer, body.toolbarMini #top #rectsBtn, body.toolbarMini #top #iconsBtn, body.toolbarMini #top #textBtn, body.toolbarMini #top #undoBtn { display:none; }
@@ -311,6 +311,8 @@
   <span id="selectionCount">1 selected</span>
   <button id="editTextBtn">Edit Text</button>
   <button id="lockBtn">Lock</button>
+  <button id="copySelectionBtn" title="Copy selected blocks">Copy</button>
+  <button id="pasteSelectionBtn" title="Paste copied blocks">Paste</button>
   <button id="backBtn">Back</button>
   <button id="frontBtn">Front</button>
   <button id="deleteBtn" class="danger">Delete</button>
@@ -972,12 +974,11 @@
     const cy = WORLD * TILE_H / 2;
     const radius = Math.hypot(cx, cy);
     const gradient = ctx.createRadialGradient(cx, cy, 0, cx, cy, radius);
-    gradient.addColorStop(0, '#ffd34e');
-    gradient.addColorStop(.20, '#f0a85c');
-    gradient.addColorStop(.42, '#a8c98a');
-    gradient.addColorStop(.66, '#75b5a5');
-    gradient.addColorStop(.84, '#668db6');
-    gradient.addColorStop(1, '#766db0');
+    gradient.addColorStop(0, '#164c48');
+    gradient.addColorStop(.24, '#125044');
+    gradient.addColorStop(.48, '#0d4147');
+    gradient.addColorStop(.72, '#0b3547');
+    gradient.addColorStop(1, '#092a3b');
     ctx.fillStyle = gradient;
     ctx.fillRect(left*TILE_W, topRow*TILE_H, (right-left)*TILE_W, (bottomRow-topRow)*TILE_H);
     ctx.restore();
@@ -989,88 +990,244 @@
     const bottomRow = Math.min(WORLD, Math.ceil(((viewH-camY)/zoom)/TILE_H)+2);
     ctx.save(); ctx.translate(camX,camY); ctx.scale(zoom,zoom);
     ctx.lineWidth = 1/zoom;
-    ctx.strokeStyle = zoom > .55 ? 'rgba(205,244,124,.48)' : 'rgba(205,244,124,.16)';
+    ctx.strokeStyle = zoom > .55 ? 'rgba(91,202,190,.27)' : 'rgba(91,202,190,.17)';
     ctx.beginPath();
     for(let x=left; x<=right; x++) { const wx=x*TILE_W; ctx.moveTo(wx, topRow*TILE_H); ctx.lineTo(wx, bottomRow*TILE_H); }
     for(let row=topRow; row<=bottomRow; row++) { const wy=row*TILE_H; ctx.moveTo(left*TILE_W, wy); ctx.lineTo(right*TILE_W, wy); }
     ctx.stroke();
-    // Medium guide lines every 10 cells.
-    ctx.lineWidth = 2/zoom;
-    ctx.strokeStyle = 'rgba(245,255,185,.70)';
-    ctx.beginPath();
-    for(let x=Math.floor(left/10)*10; x<=right; x+=10) { const wx=x*TILE_W; ctx.moveTo(wx, topRow*TILE_H); ctx.lineTo(wx, bottomRow*TILE_H); }
-    for(let row=Math.floor(topRow/10)*10; row<=bottomRow; row+=10) { const wy=row*TILE_H; ctx.moveTo(left*TILE_W, wy); ctx.lineTo(right*TILE_W, wy); }
-    ctx.stroke();
+    // Medium guide lines every 10 cells: a soft teal-blue gradient, not gold.
+    // Keep the ordinary grid calm so the strategic overlay is the only warm accent.
+    ctx.lineWidth = 1.6/zoom;
+    const guideGradient = ctx.createLinearGradient(0, 0, WORLD*TILE_W, WORLD*TILE_H);
+    guideGradient.addColorStop(0, 'rgba(77,151,190,.25)');
+    guideGradient.addColorStop(.30, 'rgba(91,194,183,.34)');
+    guideGradient.addColorStop(.52, 'rgba(132,220,197,.42)');
+    guideGradient.addColorStop(.74, 'rgba(91,194,183,.34)');
+    guideGradient.addColorStop(1, 'rgba(77,151,190,.25)');
+    for(let x=Math.floor(left/10)*10; x<=right; x+=10) {
+      const wx=x*TILE_W; ctx.beginPath(); ctx.strokeStyle=guideGradient;
+      ctx.moveTo(wx, topRow*TILE_H); ctx.lineTo(wx, bottomRow*TILE_H); ctx.stroke();
+    }
+    for(let row=Math.floor(topRow/10)*10; row<=bottomRow; row+=10) {
+      const wy=row*TILE_H; ctx.beginPath(); ctx.strokeStyle=guideGradient;
+      ctx.moveTo(left*TILE_W, wy); ctx.lineTo(right*TILE_W, wy); ctx.stroke();
+    }
+    // Warm gradient belongs ONLY to the 144 new strategic rectangles and their links.
+    const strategicGradient = ctx.createLinearGradient(0, WORLD*TILE_H, WORLD*TILE_W, 0);
+    strategicGradient.addColorStop(0, 'rgba(221,173,91,.78)');
+    strategicGradient.addColorStop(.28, 'rgba(245,202,119,.84)');
+    strategicGradient.addColorStop(.52, 'rgba(255,220,153,.88)');
+    strategicGradient.addColorStop(.76, 'rgba(239,177,101,.84)');
+    strategicGradient.addColorStop(1, 'rgba(213,137,83,.78)');
 
-    // The diagonal coordinates are INSIDE corners. Consecutive points define
-    // opposite corners of each square: (50,949) to (125,874), etc.
-    const xAnchors = [50,125,200,275,350,425,475,525,600,675,750,825,900];
-    const yHighAnchors = [949,874,799,724,649,574,499,474,399,324,249,174,99];
-    const squares = [];
-    for (let xi=0; xi<xAnchors.length-1; xi++) {
-      for (let yi=0; yi<yHighAnchors.length-1; yi++) {
-        const x1=xAnchors[xi], x2=xAnchors[xi+1];
-        const y1=yHighAnchors[yi], y2=yHighAnchors[yi+1];
-        squares.push({x:x1, yHigh:y1, w:x2-x1, h:y1-y2});
+    // Strategic block outlines: 12 columns x 12 rows = 144 blocks.
+    // Six blocks per quadrant in each direction. Standard gaps are 26 cells;
+    // the central horizontal and vertical corridors are 52 cells. The outer border margin is 50 cells.
+    // These x/y starts follow the supplied JSON coordinate pattern exactly.
+    const referenceBlocks = [
+      {x:50, y:51, w:48, h:48},
+      {x:125, y:51, w:48, h:48},
+      {x:200, y:51, w:48, h:48},
+      {x:275, y:51, w:48, h:48},
+      {x:350, y:51, w:48, h:48},
+      {x:425, y:51, w:48, h:48},
+      {x:526, y:51, w:48, h:48},
+      {x:601, y:51, w:48, h:48},
+      {x:676, y:51, w:48, h:48},
+      {x:751, y:51, w:48, h:48},
+      {x:826, y:51, w:48, h:48},
+      {x:900, y:51, w:48, h:48},
+      {x:50, y:125, w:48, h:48},
+      {x:125, y:125, w:48, h:48},
+      {x:200, y:125, w:48, h:48},
+      {x:275, y:125, w:48, h:48},
+      {x:350, y:125, w:48, h:48},
+      {x:425, y:125, w:48, h:48},
+      {x:526, y:125, w:48, h:48},
+      {x:601, y:125, w:48, h:48},
+      {x:676, y:125, w:48, h:48},
+      {x:751, y:125, w:48, h:48},
+      {x:826, y:125, w:48, h:48},
+      {x:900, y:125, w:48, h:48},
+      {x:50, y:200, w:48, h:48},
+      {x:125, y:200, w:48, h:48},
+      {x:200, y:200, w:48, h:48},
+      {x:275, y:200, w:48, h:48},
+      {x:350, y:200, w:48, h:48},
+      {x:425, y:200, w:48, h:48},
+      {x:526, y:200, w:48, h:48},
+      {x:601, y:200, w:48, h:48},
+      {x:676, y:200, w:48, h:48},
+      {x:751, y:200, w:48, h:48},
+      {x:826, y:200, w:48, h:48},
+      {x:900, y:200, w:48, h:48},
+      {x:50, y:275, w:48, h:48},
+      {x:125, y:275, w:48, h:48},
+      {x:200, y:275, w:48, h:48},
+      {x:275, y:275, w:48, h:48},
+      {x:350, y:275, w:48, h:48},
+      {x:425, y:275, w:48, h:48},
+      {x:526, y:275, w:48, h:48},
+      {x:601, y:275, w:48, h:48},
+      {x:676, y:275, w:48, h:48},
+      {x:751, y:275, w:48, h:48},
+      {x:826, y:275, w:48, h:48},
+      {x:900, y:275, w:48, h:48},
+      {x:50, y:350, w:48, h:48},
+      {x:125, y:350, w:48, h:48},
+      {x:200, y:350, w:48, h:48},
+      {x:275, y:350, w:48, h:48},
+      {x:350, y:350, w:48, h:48},
+      {x:425, y:350, w:48, h:48},
+      {x:526, y:350, w:48, h:48},
+      {x:601, y:350, w:48, h:48},
+      {x:676, y:350, w:48, h:48},
+      {x:751, y:350, w:48, h:48},
+      {x:826, y:350, w:48, h:48},
+      {x:900, y:350, w:48, h:48},
+      {x:50, y:425, w:48, h:48},
+      {x:125, y:425, w:48, h:48},
+      {x:200, y:425, w:48, h:48},
+      {x:275, y:425, w:48, h:48},
+      {x:350, y:425, w:48, h:48},
+      {x:425, y:425, w:48, h:48},
+      {x:526, y:425, w:48, h:48},
+      {x:601, y:425, w:48, h:48},
+      {x:676, y:425, w:48, h:48},
+      {x:751, y:425, w:48, h:48},
+      {x:826, y:425, w:48, h:48},
+      {x:900, y:425, w:48, h:48},
+      {x:50, y:526, w:48, h:48},
+      {x:125, y:526, w:48, h:48},
+      {x:200, y:526, w:48, h:48},
+      {x:275, y:526, w:48, h:48},
+      {x:350, y:526, w:48, h:48},
+      {x:425, y:526, w:48, h:48},
+      {x:526, y:526, w:48, h:48},
+      {x:601, y:526, w:48, h:48},
+      {x:676, y:526, w:48, h:48},
+      {x:751, y:526, w:48, h:48},
+      {x:826, y:526, w:48, h:48},
+      {x:900, y:526, w:48, h:48},
+      {x:50, y:601, w:48, h:48},
+      {x:125, y:601, w:48, h:48},
+      {x:200, y:601, w:48, h:48},
+      {x:275, y:601, w:48, h:48},
+      {x:350, y:601, w:48, h:48},
+      {x:425, y:601, w:48, h:48},
+      {x:526, y:601, w:48, h:48},
+      {x:601, y:601, w:48, h:48},
+      {x:676, y:601, w:48, h:48},
+      {x:751, y:601, w:48, h:48},
+      {x:826, y:601, w:48, h:48},
+      {x:900, y:601, w:48, h:48},
+      {x:50, y:676, w:48, h:48},
+      {x:125, y:676, w:48, h:48},
+      {x:200, y:676, w:48, h:48},
+      {x:275, y:676, w:48, h:48},
+      {x:350, y:676, w:48, h:48},
+      {x:425, y:676, w:48, h:48},
+      {x:526, y:676, w:48, h:48},
+      {x:601, y:676, w:48, h:48},
+      {x:676, y:676, w:48, h:48},
+      {x:751, y:676, w:48, h:48},
+      {x:826, y:676, w:48, h:48},
+      {x:900, y:676, w:48, h:48},
+      {x:50, y:751, w:48, h:48},
+      {x:125, y:751, w:48, h:48},
+      {x:200, y:751, w:48, h:48},
+      {x:275, y:751, w:48, h:48},
+      {x:350, y:751, w:48, h:48},
+      {x:425, y:751, w:48, h:48},
+      {x:526, y:751, w:48, h:48},
+      {x:601, y:751, w:48, h:48},
+      {x:676, y:751, w:48, h:48},
+      {x:751, y:751, w:48, h:48},
+      {x:826, y:751, w:48, h:48},
+      {x:900, y:751, w:48, h:48},
+      {x:50, y:826, w:48, h:48},
+      {x:125, y:826, w:48, h:48},
+      {x:200, y:826, w:48, h:48},
+      {x:275, y:826, w:48, h:48},
+      {x:350, y:826, w:48, h:48},
+      {x:425, y:826, w:48, h:48},
+      {x:526, y:826, w:48, h:48},
+      {x:601, y:826, w:48, h:48},
+      {x:676, y:826, w:48, h:48},
+      {x:751, y:826, w:48, h:48},
+      {x:826, y:826, w:48, h:48},
+      {x:900, y:826, w:48, h:48},
+      {x:50, y:901, w:48, h:48},
+      {x:125, y:901, w:48, h:48},
+      {x:200, y:901, w:48, h:48},
+      {x:275, y:901, w:48, h:48},
+      {x:350, y:901, w:48, h:48},
+      {x:425, y:901, w:48, h:48},
+      {x:526, y:901, w:48, h:48},
+      {x:601, y:901, w:48, h:48},
+      {x:676, y:901, w:48, h:48},
+      {x:751, y:901, w:48, h:48},
+      {x:826, y:901, w:48, h:48},
+      {x:900, y:901, w:48, h:48},
+    ];
+    // Connect block side-centres across both regular and wider central gaps,
+    // and continue the same network out to the four outer map walls.
+    ctx.save();
+    ctx.lineWidth = 2 / zoom;
+    ctx.strokeStyle = strategicGradient;
+    ctx.lineCap = 'round';
+    ctx.beginPath();
+    const positions = referenceBlocks.map(r => ({
+      r, x: r.x * TILE_W, y: (WORLD - r.y - r.h) * TILE_H,
+      w: r.w * TILE_W, h: r.h * TILE_H
+    }));
+    const near = (a,b,eps=1) => Math.abs(a-b) <= eps;
+    const connected = new Set();
+    for (let i=0; i<positions.length; i++) {
+      const a=positions[i], acx=a.x+a.w/2, acy=a.y+a.h/2;
+      for (let j=0; j<positions.length; j++) {
+        if (i===j) continue;
+        const b=positions[j], bcx=b.x+b.w/2, bcy=b.y+b.h/2;
+        // Same row; bridge regular and wider central spaces, including the wider centre corridor.
+        if (near(acy,bcy) && b.x>a.x) {
+          const gap=b.x-(a.x+a.w);
+          if (gap >= -1 && (near(gap,27*TILE_W,TILE_W) || near(gap,53*TILE_W,TILE_W))) {
+            const key=`h:${i}:${j}`;
+            if (!connected.has(key)) { ctx.moveTo(a.x+a.w,acy); ctx.lineTo(b.x,bcy); connected.add(key); }
+          }
+        }
+        // Same column; bridge regular and wider central spaces.
+        if (near(acx,bcx) && b.y>a.y) {
+          const gap=b.y-(a.y+a.h);
+          if (gap >= -1 && (near(gap,27*TILE_H,TILE_H) || near(gap,53*TILE_H,TILE_H))) {
+            const key=`v:${i}:${j}`;
+            if (!connected.has(key)) { ctx.moveTo(acx,a.y+a.h); ctx.lineTo(bcx,b.y); connected.add(key); }
+          }
+        }
       }
     }
-    // Convert high-Y game coordinates to canvas coordinates.
-    const worldY = yHigh => (WORLD-yHigh)*TILE_H;
-    // Opposite gradient: cool dark lines at the warm center, warm bright lines
-    // at the cool outer edges, preserving contrast over the background.
-    const cx = WORLD * TILE_W / 2;
-    const cy = WORLD * TILE_H / 2;
-    const radius = Math.hypot(cx, cy);
-    const lineGradient = ctx.createRadialGradient(cx, cy, 0, cx, cy, radius);
-    lineGradient.addColorStop(0, '#766db0');
-    lineGradient.addColorStop(.20, '#668db6');
-    lineGradient.addColorStop(.42, '#75b5a5');
-    lineGradient.addColorStop(.66, '#a8c98a');
-    lineGradient.addColorStop(.84, '#f0a85c');
-    lineGradient.addColorStop(1, '#ffd34e');
-    ctx.lineWidth = 7/zoom;
-    ctx.strokeStyle = lineGradient;
-    ctx.lineJoin = 'round';
-    ctx.beginPath();
-    for (const {x,yHigh,w,h} of squares) {
-      ctx.rect(x*TILE_W, worldY(yHigh), w*TILE_W, h*TILE_H);
+    // Extend exposed side-centres to the outer map boundary when no aligned block is beyond them.
+    for (let i=0; i<positions.length; i++) {
+      const a=positions[i], acx=a.x+a.w/2, acy=a.y+a.h/2;
+      const sameRow=positions.filter((b,j)=>j!==i && near(b.y+a.h/2,a.y+a.h/2) && near(b.h,a.h));
+      const sameCol=positions.filter((b,j)=>j!==i && near(b.x+a.w/2,a.x+a.w/2) && near(b.w,a.w));
+      if (!sameRow.some(b=>b.x < a.x)) ctx.moveTo(a.x,acy),ctx.lineTo(0,acy);
+      if (!sameRow.some(b=>b.x > a.x)) ctx.moveTo(a.x+a.w,acy),ctx.lineTo(WORLD_W,acy);
+      if (!sameCol.some(b=>b.y < a.y)) ctx.moveTo(acx,a.y),ctx.lineTo(acx,0);
+      if (!sameCol.some(b=>b.y > a.y)) ctx.moveTo(acx,a.y+a.h),ctx.lineTo(acx,WORLD_H);
     }
     ctx.stroke();
+    ctx.restore();
 
-    // Join side midpoints across each row and column of the complete square grid.
+    // Match the medium guide-line weight and scale naturally while zooming.
+    ctx.lineWidth = 2 / zoom;
+    ctx.strokeStyle = strategicGradient;
+    ctx.lineJoin = 'miter';
     ctx.beginPath();
-    const xs=xAnchors.slice(0,-1), ys=yHighAnchors.slice(0,-1);
-    for (let xi=0; xi<xs.length; xi++) {
-      for (let yi=0; yi<ys.length; yi++) {
-        const x=xs[xi], yHigh=ys[yi];
-        const w=xAnchors[xi+1]-x, h=yHigh-yHighAnchors[yi+1];
-        const topY=worldY(yHigh), midY=topY+(h*TILE_H)/2, midX=(x+w/2)*TILE_W;
-        if (xi+1<xs.length) {
-          ctx.moveTo((x+w)*TILE_W, midY);
-          ctx.lineTo(xAnchors[xi+1]*TILE_W, midY);
-        }
-        if (yi+1<ys.length) {
-          ctx.moveTo(midX, topY+h*TILE_H);
-          ctx.lineTo(midX, worldY(yHighAnchors[yi+1]));
-        }
-      }
-    }
-    // Extend the midpoint of every outer square side to the map boundary.
-    const mapRight=WORLD*TILE_W, mapBottom=WORLD*TILE_H;
-    for (let xi=0; xi<xs.length; xi++) {
-      const x=xs[xi], w=xAnchors[xi+1]-x;
-      const midX=(x+w/2)*TILE_W;
-      ctx.moveTo(midX, worldY(yHighAnchors[0])); ctx.lineTo(midX, 0);
-      const lastY=yHighAnchors[yHighAnchors.length-2];
-      const lastH=lastY-yHighAnchors[yHighAnchors.length-1];
-      ctx.moveTo(midX, worldY(lastY)+lastH*TILE_H); ctx.lineTo(midX, mapBottom);
-    }
-    for (let yi=0; yi<ys.length; yi++) {
-      const yHigh=ys[yi], h=yHigh-yHighAnchors[yi+1];
-      const midY=worldY(yHigh)+(h*TILE_H)/2;
-      ctx.moveTo(xs[0]*TILE_W, midY); ctx.lineTo(0, midY);
-      const lastX=xAnchors[xAnchors.length-2], lastW=xAnchors[xAnchors.length-1]-lastX;
-      ctx.moveTo((lastX+lastW)*TILE_W, midY); ctx.lineTo(mapRight, midY);
+    for (const r of referenceBlocks) {
+      const wx = r.x * TILE_W;
+      const wy = (WORLD - r.y - r.h) * TILE_H;
+      ctx.rect(wx, wy, r.w * TILE_W, r.h * TILE_H);
     }
     ctx.stroke();
     ctx.restore();
@@ -1083,7 +1240,7 @@
       const {wx,wy}=cellToWorldTopLeft(r.x,r.y,r.h);
       const preset = STYLE_PRESETS[r.style || 'blue'] || STYLE_PRESETS.blue;
       const isSel = isSelected('rect', i);
-      ctx.fillStyle = isSel ? 'rgba(156,255,89,.28)' : preset.fill;
+      ctx.fillStyle = isSel ? 'rgba(66,220,203,.28)' : preset.fill;
       ctx.strokeStyle = isSel ? 'rgba(230,255,180,.98)' : preset.stroke;
       ctx.lineWidth = Math.max(2/zoom, 1.5);
       if ((r.style || 'blue') !== 'outline') ctx.fillRect(wx,wy,r.w*TILE_W,r.h*TILE_H);
@@ -1092,7 +1249,7 @@
     if(startCell && hoverCell && mode==='rect') {
       const r=normalizeRect(startCell,hoverCell); const {wx,wy}=cellToWorldTopLeft(r.x,r.y,r.h);
       const preset = STYLE_PRESETS[currentStyle] || STYLE_PRESETS.blue;
-      ctx.fillStyle=preset.fill; ctx.strokeStyle='rgba(156,255,89,1)'; ctx.lineWidth=Math.max(2/zoom,2);
+      ctx.fillStyle=preset.fill; ctx.strokeStyle='rgba(66,220,203,1)'; ctx.lineWidth=Math.max(2/zoom,2);
       if (currentStyle !== 'outline') ctx.fillRect(wx,wy,r.w*TILE_W,r.h*TILE_H);
       ctx.strokeRect(wx,wy,r.w*TILE_W,r.h*TILE_H);
     }
@@ -1142,7 +1299,7 @@
       ctx.shadowBlur = 1.5 / zoom;
       ctx.shadowOffsetX = .8 / zoom;
       ctx.shadowOffsetY = .8 / zoom;
-      ctx.fillStyle = '#fff7d6';
+      ctx.fillStyle = '#fff0a6';
       ctx.fillText(label, cx, cy);
 
       ctx.shadowColor = 'transparent';
@@ -1528,6 +1685,8 @@
   document.getElementById('textBtn').onclick=()=>openTextPanelForNew();
   document.getElementById('deleteBtn').onclick=()=>deleteSelectedItems();
   document.getElementById('lockBtn').onclick=()=>toggleSelectedLock();
+  document.getElementById('copySelectionBtn').onclick=()=>copySelection();
+  document.getElementById('pasteSelectionBtn').onclick=()=>pasteSelection();
   if (editTextBtn) editTextBtn.onclick=()=>editSelectedText();
   if (moreBtn) moreBtn.onclick=()=>toggleMoreMenu();
   document.getElementById('deleteModeBtn').onclick=()=>{ closeMoreMenu(); setMode('delete'); };
