@@ -1145,15 +1145,7 @@
     for(let row=Math.floor(topRow/10)*10; row<=bottomRow; row+=10) { const wy=row*TILE_H; ctx.moveTo(left*TILE_W, wy); ctx.lineTo(right*TILE_W, wy); }
     ctx.stroke();
 
-    // Heavy sector lines every 50 cells: 0–49, 50–99, 100–149, etc.
-    // The app uses bottom-left map coordinates, so row multiples of 50 line up
-    // with y=0, y=50, y=100... boundaries.
-    ctx.lineWidth = 4/zoom;
-    ctx.strokeStyle = 'rgba(255,255,220,.96)';
-    ctx.beginPath();
-    for(let x=Math.floor(left/50)*50; x<=right; x+=50) { const wx=x*TILE_W; ctx.moveTo(wx, topRow*TILE_H); ctx.lineTo(wx, bottomRow*TILE_H); }
-    for(let row=Math.floor(topRow/50)*50; row<=bottomRow; row+=50) { const wy=row*TILE_H; ctx.moveTo(left*TILE_W, wy); ctx.lineTo(right*TILE_W, wy); }
-    ctx.stroke();
+    // No special 50-cell sector lines: keep grid line weight consistent.
     ctx.restore();
   }
 
