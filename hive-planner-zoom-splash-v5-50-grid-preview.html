@@ -1002,53 +1002,77 @@
     for(let row=Math.floor(topRow/10)*10; row<=bottomRow; row+=10) { const wy=row*TILE_H; ctx.moveTo(left*TILE_W, wy); ctx.lineTo(right*TILE_W, wy); }
     ctx.stroke();
 
-    // Build the complete square lattice from the supplied diagonal coordinates.
-    // The diagonal defines the anchor positions; use every x/y combination
-    // so no squares are missing elsewhere on the map.
-    const anchors = [50,125,200,275,350,425,525,600,675,750,825,900];
-    const size = 48;
+    // The diagonal coordinates are INSIDE corners. Consecutive points define
+    // opposite corners of each square: (50,949) to (125,874), etc.
+    const xAnchors = [50,125,200,275,350,425,475,525,600,675,750,825,900];
+    const yHighAnchors = [949,874,799,724,649,574,499,474,399,324,249,174,99];
     const squares = [];
-    const squareByKey = new Map();
-    for (const x of anchors) {
-      for (const y of anchors) {
-        const square = {x, y};
-        squares.push(square);
-        squareByKey.set(`${x},${y}`, square);
+    for (let xi=0; xi<xAnchors.length-1; xi++) {
+      for (let yi=0; yi<yHighAnchors.length-1; yi++) {
+        const x1=xAnchors[xi], x2=xAnchors[xi+1];
+        const y1=yHighAnchors[yi], y2=yHighAnchors[yi+1];
+        squares.push({x:x1, yHigh:y1, w:x2-x1, h:y1-y2});
       }
     }
-    const worldY = y => (WORLD-y-size)*TILE_H;
+    // Convert high-Y game coordinates to canvas coordinates.
+    const worldY = yHigh => (WORLD-yHigh)*TILE_H;
+    // Opposite gradient: cool dark lines at the warm center, warm bright lines
+    // at the cool outer edges, preserving contrast over the background.
+    const cx = WORLD * TILE_W / 2;
+    const cy = WORLD * TILE_H / 2;
+    const radius = Math.hypot(cx, cy);
+    const lineGradient = ctx.createRadialGradient(cx, cy, 0, cx, cy, radius);
+    lineGradient.addColorStop(0, '#766db0');
+    lineGradient.addColorStop(.20, '#668db6');
+    lineGradient.addColorStop(.42, '#75b5a5');
+    lineGradient.addColorStop(.66, '#a8c98a');
+    lineGradient.addColorStop(.84, '#f0a85c');
+    lineGradient.addColorStop(1, '#ffd34e');
     ctx.lineWidth = 3/zoom;
-    ctx.strokeStyle = 'rgba(29,43,48,.92)';
+    ctx.strokeStyle = lineGradient;
+    ctx.lineJoin = 'round';
     ctx.beginPath();
-    for (const {x,y} of squares) {
-      ctx.rect(x*TILE_W, worldY(y), size*TILE_W, size*TILE_H);
+    for (const {x,yHigh,w,h} of squares) {
+      ctx.rect(x*TILE_W, worldY(yHigh), w*TILE_W, h*TILE_H);
     }
     ctx.stroke();
 
-    // Join the midpoint of each square's side to the corresponding midpoint
-    // of its immediate neighbor. Lines bridge the gaps without crossing squares.
+    // Join side midpoints across each row and column of the complete square grid.
     ctx.beginPath();
-    for (let xi=0; xi<anchors.length; xi++) {
-      for (let yi=0; yi<anchors.length; yi++) {
-        const x=anchors[xi], y=anchors[yi];
-        const rightX=anchors[xi+1];
-        const nextY=anchors[yi+1];
-        const midY=worldY(y) + (size*TILE_H)/2;
-        const midX=x*TILE_W + (size*TILE_W)/2;
-        if (rightX !== undefined) {
-          ctx.moveTo((x+size)*TILE_W, midY);
-          ctx.lineTo(rightX*TILE_W, midY);
+    const xs=xAnchors.slice(0,-1), ys=yHighAnchors.slice(0,-1);
+    for (let xi=0; xi<xs.length; xi++) {
+      for (let yi=0; yi<ys.length; yi++) {
+        const x=xs[xi], yHigh=ys[yi];
+        const w=xAnchors[xi+1]-x, h=yHigh-yHighAnchors[yi+1];
+        const topY=worldY(yHigh), midY=topY+(h*TILE_H)/2, midX=(x+w/2)*TILE_W;
+        if (xi+1<xs.length) {
+          ctx.moveTo((x+w)*TILE_W, midY);
+          ctx.lineTo(xAnchors[xi+1]*TILE_W, midY);
         }
-        if (nextY !== undefined) {
-          const lowerEdgeY=worldY(y);
-          const nextTopY=worldY(nextY)+size*TILE_H;
-          ctx.moveTo(midX, lowerEdgeY);
-          ctx.lineTo(midX, nextTopY);
+        if (yi+1<ys.length) {
+          ctx.moveTo(midX, topY+h*TILE_H);
+          ctx.lineTo(midX, worldY(yHighAnchors[yi+1]));
         }
       }
     }
+    // Extend the midpoint of every outer square side to the map boundary.
+    const mapRight=WORLD*TILE_W, mapBottom=WORLD*TILE_H;
+    for (let xi=0; xi<xs.length; xi++) {
+      const x=xs[xi], w=xAnchors[xi+1]-x;
+      const midX=(x+w/2)*TILE_W;
+      ctx.moveTo(midX, worldY(yHighAnchors[0])); ctx.lineTo(midX, 0);
+      const lastY=yHighAnchors[yHighAnchors.length-2];
+      const lastH=lastY-yHighAnchors[yHighAnchors.length-1];
+      ctx.moveTo(midX, worldY(lastY)+lastH*TILE_H); ctx.lineTo(midX, mapBottom);
+    }
+    for (let yi=0; yi<ys.length; yi++) {
+      const yHigh=ys[yi], h=yHigh-yHighAnchors[yi+1];
+      const midY=worldY(yHigh)+(h*TILE_H)/2;
+      ctx.moveTo(xs[0]*TILE_W, midY); ctx.lineTo(0, midY);
+      const lastX=xAnchors[xAnchors.length-2], lastW=xAnchors[xAnchors.length-1]-lastX;
+      ctx.moveTo((lastX+lastW)*TILE_W, midY); ctx.lineTo(mapRight, midY);
+    }
     ctx.stroke();
-    // Keep ordinary grid thickness consistent outside the highlighted squares.
     ctx.restore();
   }
 
