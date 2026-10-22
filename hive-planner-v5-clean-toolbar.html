@@ -304,7 +304,7 @@
   <button id="zoomIn">Zoom +</button>
   <button id="resetBtn">Reset View</button>
   <button id="jsonBtn">JSON / Save</button>
-  <button id="mapBackgroundBtn" aria-pressed="true">Map Image: ON</button>
+  <button id="mapBackgroundBtn" aria-pressed="true">Map Background: ON</button>
   <button id="compactBtn">Compact Toolbar</button>
   <button id="clearBtn" class="danger">Clear All</button>
 </div>
@@ -387,7 +387,7 @@
   function setMapBackgroundEnabled(enabled) {
     mapBackgroundEnabled = !!enabled;
     if (mapBackgroundBtn) {
-      mapBackgroundBtn.textContent = `Map Image: ${mapBackgroundEnabled ? 'ON' : 'OFF'}`;
+      mapBackgroundBtn.textContent = `Map Background: ${mapBackgroundEnabled ? 'ON' : 'OFF'}`;
       mapBackgroundBtn.setAttribute('aria-pressed', String(mapBackgroundEnabled));
     }
     try { localStorage.setItem('hive_planner_map_background', mapBackgroundEnabled ? 'on' : 'off'); } catch(e) {}
@@ -1485,7 +1485,7 @@
     if (compactBtn) compactBtn.textContent = document.body.classList.contains('toolbarMini') ? 'Full Toolbar' : 'Compact Toolbar';
   }
 
-  if (mapBackgroundBtn) { mapBackgroundBtn.textContent = `Map Image: ${mapBackgroundEnabled ? 'ON' : 'OFF'}`; mapBackgroundBtn.setAttribute('aria-pressed', String(mapBackgroundEnabled)); }
+  if (mapBackgroundBtn) { mapBackgroundBtn.textContent = `Map Background: ${mapBackgroundEnabled ? 'ON' : 'OFF'}`; mapBackgroundBtn.setAttribute('aria-pressed', String(mapBackgroundEnabled)); }
   document.getElementById('panBtn').onclick=()=>setMode('pan');
   document.getElementById('rectsBtn').onclick=()=>openToolMenu('rect');
   document.getElementById('iconsBtn').onclick=()=>openToolMenu('icon');
