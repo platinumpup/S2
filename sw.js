@@ -1,4 +1,4 @@
-const CACHE_NAME = 'hive-planner-full-grid-background-v3';
+const CACHE_NAME = 'hive-planner-diagonal-inside-corners-v2';
 const ASSETS = [
   './',
   './index.html',
