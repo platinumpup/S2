@@ -476,10 +476,20 @@
   // from the top-left boundary (0,0) to the far boundary (1000,1000).
   // TILE_W/TILE_H and all coordinate math remain unchanged.
   const MAP_SRC = "./map-background-aligned.jpg";
-  const MAP_X = 0;
-  const MAP_Y = 0;
-  const MAP_W = WORLD * TILE_W;
-  const MAP_H = WORLD * TILE_H;
+  // Anchor the upper-left numbered-free square's INSIDE corners to world coordinates:
+  // top-left (50,949), bottom-right (98,901). The reference square is 48x48 cells.
+  // Source-image anchor measured from the supplied image (source pixels).
+  const MAP_ANCHOR_LEFT_PX = 94;
+  const MAP_ANCHOR_TOP_PX = 97;
+  const MAP_ANCHOR_RIGHT_PX = 181;
+  const MAP_ANCHOR_BOTTOM_PX = 190;
+  const MAP_ANCHOR_WORLD_SPAN = 48;
+  const MAP_SCALE_X = (MAP_ANCHOR_WORLD_SPAN * TILE_W) / (MAP_ANCHOR_RIGHT_PX - MAP_ANCHOR_LEFT_PX);
+  const MAP_SCALE_Y = (MAP_ANCHOR_WORLD_SPAN * TILE_H) / (MAP_ANCHOR_BOTTOM_PX - MAP_ANCHOR_TOP_PX);
+  const MAP_X = 50 * TILE_W - MAP_ANCHOR_LEFT_PX * MAP_SCALE_X;
+  const MAP_Y = (WORLD - 950) * TILE_H - MAP_ANCHOR_TOP_PX * MAP_SCALE_Y;
+  const MAP_W = 1800 * MAP_SCALE_X;
+  const MAP_H = 1864 * MAP_SCALE_Y;
   const mapBackground = new Image();
   let mapBackgroundEnabled = true;
   try { mapBackgroundEnabled = localStorage.getItem('hive_planner_map_background') !== 'off'; } catch(e) {}
