@@ -394,7 +394,7 @@
     <button id="panBtn" class="active">Pan</button>
     <button id="selectMultipleBtn" aria-pressed="false">Select Multiple</button>
     <button id="rectsBtn">Draw ▾</button>
-    <button id="iconsBtn">Icons ▾</button>
+    <button id="iconsBtn">Objects ▾</button>
     <button id="textBtn">Text</button>
   </div>
   <span class="spacer"></span>
@@ -424,7 +424,7 @@
 </div>
 <div class="hint" id="hint">Pan selects/moves • Shift/Ctrl multi-select • right-click deletes</div>
 <div id="rectPanel"></div>
-<div id="iconPanel"><div id="castlePlacementSubmenu" style="display:none;grid-column:1/-1"><div id="iconPlacementTitle">Icon placement</div><button id="confirmCastleBtn">Confirm</button><button id="moveIconBtn" style="display:none">Move</button><button id="cancelCastleBtn">Cancel</button></div></div>
+<div id="iconPanel"><div id="castlePlacementSubmenu" style="display:none;grid-column:1/-1"><div id="iconPlacementTitle">Object placement</div><button id="confirmCastleBtn">Confirm</button><button id="moveIconBtn" style="display:none">Move</button><button id="cancelCastleBtn">Cancel</button></div></div>
 <div id="bottom" class="bar">
   <div class="readout" id="readout">x: — y: —<br>zoom: —</div>
   <span class="spacer"></span>
@@ -891,7 +891,7 @@
     }
     if (iconBtn) {
       const def = ICON_DEF_MAP[currentIcon];
-      iconBtn.textContent = mode === 'icon' && def ? `Icons: ${def.label} ▾` : 'Icons ▾';
+      iconBtn.textContent = mode === 'icon' && def ? `Objects: ${def.label} ▾` : 'Objects ▾';
       iconBtn.classList.toggle('active', mode==='icon');
     }
     if (panBtn) panBtn.classList.toggle('active', mode==='pan');
@@ -1498,7 +1498,7 @@
     if (confirm) { confirm.style.display = (pendingCastle || placedMode) ? '' : 'none'; confirm.disabled = !pendingCastle; confirm.style.opacity = pendingCastle ? '1' : '.5'; }
     if (cancel) cancel.style.display = pendingCastle ? '' : 'none';
     if (move) move.style.display = placedMode ? '' : 'none';
-    if (title) title.textContent = pendingCastle ? `${(ICON_DEF_MAP[pendingCastle.type]||ICON_DEF_MAP.castle).label} placement` : (selectedIcon ? `${(ICON_DEF_MAP[selectedIcon.type]||ICON_DEF_MAP.castle).label} options` : 'Icon placement');
+    if (title) title.textContent = pendingCastle ? `${(ICON_DEF_MAP[pendingCastle.type]||ICON_DEF_MAP.castle).label} placement` : (selectedIcon ? `${(ICON_DEF_MAP[selectedIcon.type]||ICON_DEF_MAP.castle).label} options` : 'Object placement');
     if (confirm && pendingCastle) confirm.textContent = `Confirm ${(ICON_DEF_MAP[pendingCastle.type]||ICON_DEF_MAP.castle).label}`;
   }
   function confirmCastlePlacement() {
